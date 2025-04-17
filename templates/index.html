@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Farmer Chatbot</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f4f8;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 40px auto;
+      background: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+
+    .header {
+      background-color: #4caf50;
+      color: white;
+      padding: 20px;
+      font-size: 20px;
+      text-align: center;
+    }
+
+    .chat-box {
+      padding: 20px;
+      height: 400px;
+      overflow-y: scroll;
+      border-bottom: 1px solid #eee;
+    }
+
+    .message {
+      margin: 10px 0;
+    }
+
+    .user {
+      color: #2196f3;
+    }
+
+    .bot {
+      color: #4caf50;
+    }
+
+    .input-area {
+      display: flex;
+      padding: 15px;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+
+    button {
+      margin-left: 10px;
+      padding: 10px 20px;
+      border: none;
+      background-color: #4caf50;
+      color: white;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">🌾 Farmer Assistant Bot</div>
+  <div class="chat-box" id="chatBox"></div>
+  <div class="input-area">
+    <input type="text" id="userInput" placeholder="Ask your farming question..." />
+    <button onclick="sendMessage()">Send</button>
+  </div>
+</div>
+
+<script>
+  async function sendMessage() {
+    const userInput = document.getElementById("userInput").value.trim();
+    if (!userInput) return;
+
+    const chatBox = document.getElementById("chatBox");
+
+    // Add user message
+    chatBox.innerHTML += `<div class="message"><strong class="user">You:</strong> ${userInput}</div>`;
+    chatBox.scrollTop = chatBox.scrollHeight;
+
+    // Send request to backend
+    const response = await fetch("/get", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: userInput })
+    });
+
+    const data = await response.json();
+
+    // Add bot response
+    chatBox.innerHTML += `<div class="message"><strong class="bot">Bot:</strong> ${data.reply}</div>`;
+    chatBox.scrollTop = chatBox.scrollHeight;
+
+    // Clear input
+    document.getElementById("userInput").value = "";
+  }
+</script>
+
+</body>
+</html>
